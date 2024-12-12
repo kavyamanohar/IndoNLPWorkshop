@@ -1,0 +1,262 @@
+% This must be in the first 5 lines to tell arXiv to use pdfLaTeX, which is strongly recommended.
+% \pdfoutput=1
+% In particular, the hyperref package requires pdfLaTeX in order to break URLs across lines.
+
+\documentclass[11pt]{article}
+
+% Change "review" to "final" to generate the final (sometimes called camera-ready) version.
+% Change to "preprint" to generate a non-anonymous version with page numbers.
+\usepackage[final]{coling}
+
+% Standard package includes
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{fontspec} % Required for custom fonts and Unicode
+\usepackage{fontspec} % For custom fonts and Unicode support
+\usepackage{polyglossia} % For multilingual typesetting
+\usepackage{float}
+
+% Specify the default language and additional languages
+\setdefaultlanguage{english}
+\setotherlanguage{malayalam}
+
+% Set fonts for Malayalam and English
+\newfontfamily\malayalamfont[Script=Malayalam]{Gayathri} % Replace with your installed Malayalam font
+\newfontfamily\ipafont{Gentium} % Replace with your installed Malayalam font
+
+\usepackage[T1]{fontenc}
+% For Vietnamese characters
+% \usepackage[T5]{fontenc}
+% See https://www.latex-project.org/help/documentation/encguide.pdf for other character sets
+
+% This assumes your files are encoded as UTF8
+\usepackage[utf8]{inputenc}
+
+% This is not strictly necessary, and may be commented out,
+% but it will improve the layout of the manuscript,
+% and will typically save some space.
+\usepackage{microtype}
+
+% This is also not strictly necessary, and may be commented out.
+% However, it will improve the aesthetics of text in
+% the typewriter font.
+\usepackage{inconsolata}
+
+%Including images in your LaTeX document requires adding
+%additional package(s)
+\usepackage{graphicx}
+
+% If the title and author information does not fit in the area allocated, uncomment the following
+%
+%\setlength\titlebox{<dim>}
+%
+% and set <dim> to something 5cm or larger.
+
+\title{Romanized to Native Malayalam Script Transliteration Using an Encoder-Decoder Framework}
+
+
+\author{Bajiyo Baiju, Leena G Pillai, Kavya Manohar, Elizabeth Sherly \\
+       Digital University Kerala \\ Thiruvananthapuram \\ Kerala, India}
+
+
+
+\begin{document}
+\maketitle
+\begin{abstract}
+% This document is a supplement to the general instructions for COLING 2025 authors. It contains instructions for using the \LaTeX{} style files for COLING 2025.
+% The document itself conforms to its own specifications, and is therefore an example of what your manuscript should look like.
+% These instructions should be used both for papers submitted for review and for final versions of accepted papers.
+In this work, we present the development of a reverse transliteration model to convert romanized Malayalam to native script using an encoder-decoder framework built with attention-based bidirectional Long Short Term Memory (Bi-LSTM) architecture. To train the model, we have used curated and combined collection of 4.3 million transliteration pairs derived from publicly available Indic language translitertion datasets, \textit{Dakshina} and \textit{Aksharantar}. We evaluated the model on two different test dataset provided by \textit{ IndoNLP-2025-Shared-Task} that contain, (1) General typing patterns and (2) Adhoc typing patterns, respectively. On the Test Set-1, we obtained a character error rate (CER) of 7.42\%. However upon Test Set-2, with adhoc typing patterns, where most vowel indicators are missing, our model gave a CER of 22.79\%.
+
+
+\end{abstract}
+
+\section{Introduction}
+
+% These instructions are for authors submitting papers to the COLING 2025 conference using \LaTeX. They are not self-contained. All authors must follow the general instructions for COLING 2025 proceedings which are an adaptation of (or rely on) the general instructions for ACL proceedings\footnote{\url{http://acl-org.github.io/ACLPUB/formatting.html}}, and this document contains additional instructions for the \LaTeX{} style files.
+
+% The templates include the \LaTeX{} source of this document (\texttt{coling\_latex.tex}),
+% the \LaTeX{} style file used to format it (\texttt{coling.sty}),
+% a COLING bibliography style (\texttt{coling\_natbib.bst}),
+% an example bibliography (\texttt{custom.bib}),
+% and the bibliography for the ACL Anthology (\texttt{anthology.bib}).
+
+Typing in native script has always remained a challenge for speakers of many Indian languages including Malayalam, across diverse digital platforms. In the pre-smartphone era, where native language typing was virtually non-existent due to the unavailability of accessible and user-friendly keyboards, typing Malayalam in the Roman script was the norm. Even with advancements in technology, typing in the Roman script has become the natural and preferred mode of input across devices for an average user \cite{madhani-etal-2023-aksharantar}. While romanized communication seems convenient, it is not preferred in formal contexts.
+
+Transliteration from romanized input to native scripts is inherently complex due to variations in typing styles, the absence of standardized romanization schemes, and the context-dependent nature of character mappings. Hence there is a need for real-time transliteration tools that can seamlessly convert romanized Malayalam into its native script. In this work, we address this need by developing a robust reverse transliteration model for Malayalam, where romanised Malayalam is automatically converted into native script.
+% As underlined in \citeauthor{madhani-etal-2023-aksharantar}, this work is not an alternative to researches on precise native language input methods. 
+
+The proposed model leverages an attention-based bidirectional Long Short Term Memory (Bi-LSTM) encoder-decoder framework, trained on large-scale transliteration datasets, namely \textit{Dakshina} \cite{roark-etal-2020-processing} and \textit{Aksharantar} \cite{madhani-etal-2023-aksharantar}. The code for training the model is published under MIT License \footnote{\url{https://github.com/VRCLC-DUK/ml-en-transliteration}}. This paper outlines the related works, datasets, model architecture and results, highlighting the model's performance on datasets that reflect both general and adhoc typing patterns.
+\vspace{-0.2cm}
+\section{Related Works}
+
+
+Rule-based and data-driven approaches are the two
+main strategies for transliteration \cite{kavya2022}. Prior to the advent of deep learning approaches of learning from huge data, rule based approaches were the norm. In the context of well defined romanization standards \cite{iso}, rule based approaches are the best in terms of speed and accuracy. However there are non-standard romanised Malayalam used in informal communication contexts, that calls for deep learning solutions.
+
+A rule based system available for transliteration among Indian languages based on soundex algorithms is introduced in \textit{Libindic} \cite{libindic}. \textit{Aksharamukha} script converter is is another rule-based systems that transliterates among 121 scripts and 21 standard romanization methods \cite{aksharamukha}. The \textit{Brahmi-Net} tool covers 306 language pairs across 13 Indo-Aryan, 4 Dravidian languages, and English, utilizing an unsupervised method to mine parallel transliteration corpora for statistical training. This hybrid system leverages Unicode ranges and an extended ITRANS encoding to enable script conversions between Brahmi-derived scripts \cite{kunchukuttan-etal-2015-brahmi}.
+
+Deep learning approaches rely on carefully crafted transliteration corpora for training the models. \textit{Dakshina} is an open licensed and curated transliteration corpora \cite{roark-etal-2020-processing} consisting of native script text, a romanization lexicon and some romanized full sentences in 12 south Asian languages. \textit{Aksharantar} is the largest publicly available transliteration dataset with 26 million transliteration pairs for Indian languages created by mining from  monolingual and parallel corpora, as well as collecting data from human annotators \cite{kunchukuttan-etal-2021-large,madhani-etal-2023-aksharantar}. It has also been reported that mined name pair datasets \cite{namepair} could be used for training general purpose transliteration models \cite{Baiju2024}. 
+
+A multitask learning based training for multilingual neural transliteration leveraging orthographic similarity between languages was described in \cite{kunchukuttan2018leveraging}. Non-neural method like pair \textit{n-gram} and nueral methods like sequence-sequence LSTM  and transformer architectures were compared in \citeauthor{roark-etal-2020-processing} for single words transliteration task.
+Transliteration implemented using neural machine translation system (NMT) was proposed by \citeauthor{kunchukuttan-etal-2021-large}, where \textit{Marian} \cite{junczys-dowmunt-etal-2018-marian} was used for training the model. IndicXlit is a multilingual neural transliteration model trained on the  \textit{Aksharantar} \cite{madhani-etal-2023-aksharantar} dataset using an encoder-decoder transformer architecture. Grapheme to Phoneme Conversion systems for precise mapping of Malayalam script to precise romanisation schemes have been explored in rule based \cite{baby2016resources,parlikar2016festvox, manghat2020malayalam} and data driven \cite{Priyamvada_2021} fashions.
+
+Transliterating sentences are considered as a different task than transliterating single words in \cite{roark-etal-2020-processing}. Identifying word contexts can improve sentence level transliteration. \citeauthor{kirov2024context} describes methods to incorporate language models to improve transliteration of full sentences as opposed to single words. 
+
+In the current work, we train word-level transliteration model. During testing, we preprocess sentences by extracting individual words, performing word-level transliteration, and then reconstructing the full sentence in the post-processing stage. Non-alphabetic characters like punctuation and numbers are excluded from model input, preserved in their original positions, and reinserted after generating the transliterated token sequence.
+
+\vspace{-.2cm}
+\section{Methodology}
+
+The methodology involved in this study encompasses the curation and preprocessing of training datasets, design of the model architecture, training, and evaluation on the test data set.
+\vspace{-.2cm}
+\subsection{Datsets}
+
+\begin{table*}[htbp]
+  \caption{An illustration of 3 character errors distributed across 3 words severly deteriorating WER and BLEU scores. The errors in transliteration are indicated in red color.}
+  \label{tab:test1}
+  \centering
+   \begin{tabular}{p{4cm}p{4.3cm}p{1.7cm}p{1.7cm}p{1.7cm}}
+
+    \hline
+    \textbf{Ground Truth} & \textbf{Predictions} & \textbf{CER(\%)} & \textbf{WER(\%)} &\textbf{BLEU(\%)}\\
+    \hline
+    {\footnotesize{\malayalamfont കനകദുർഗയും വിളയോടി ശിവൻകുട്ടിയും വിവാഹിതരായി}}
+     & {\footnotesize{\malayalamfont കനക\textcolor{red}{ടു}ർഗയും വി\textcolor{red}{ല}യോടി ശിവൻകുട്ടിയും\textcolor{red}{ം} വിവാഹിതരായി}} & 6.8 & 75.0 & 8.03 \\ 
+    \hline
+  \end{tabular}
+
+\end{table*}
+
+
+The reverse transliteration model for romanized Malayalam is trained on two publicly available curated collection of Indic language transliteration datasets: \textit{Dakshina}\footnote{\url{https://github.com/google-research-datasets/dakshina}} and the \textit{Aksharantar}\footnote{\url{https://huggingface.co/datasets/ai4bharat/Aksharantar}}. The \textit{Dakshina} dataset comprises of 244 thousand single word transliteration pairs, while the \textit{Aksharantar} dataset adds a significantly larger volume of 4.100 million pairs. Together, these datasets comprise a total of 4.344 million word-level transliteration pairs. The combined dataset ensures a rich and diverse training set that includes both common and rare transliteration patterns, capturing variations in typing styles and phonetic representations.
+
+
+% The training dataset used for the reverse transliteration model consists of a curated combination of two publicly available I These datasets were selected to ensure comprehensive coverage of romanized Malayalam words and their corresponding native script representations, providing a robust foundation for model training.
+
+Each entry in the dataset is structured as a pair of columns: `ml' and `en'. The `ml' column represents the native Malayalam script, while the `en' column contains the corresponding romanized representation. This consistent and simple structure facilitates efficient preprocessing and model training, enabling the encoder-decoder framework to learn the mapping between the romanized input and the native script output effectively.
+
+
+
+
+\subsection{Model Architecture and Training}
+The proposed reverse transliteration model for converting romanized Malayalam to native script is based on an attention-enabled encoder-decoder framework utilizing Bi-LSTM layers. We define separate source and target tokenizers. The source tokens are lower case Latin characters and the target tokens are Malayalam characters comprising of vowels, vowel signs, consonants and the special characters \textit{anuswaram}, \textit{visargam}, \textit{virama} and \textit{chillu} \cite{kavya2022}.
+
+
+\begin{figure*}[!htpb]
+  \includegraphics[width=\textwidth]{IndoNLP1_test.png}
+  \caption{The distribution of WER, CER and BLEU over the Test Set-1. }
+  \label{fig:test1}
+\end{figure*}
+
+
+\begin{figure*}[!htpb]
+  \includegraphics[width=\textwidth]{IndoNLP2_test.png}
+  \caption{The distribution of WER, CER and BLEU over the Test Set-2.}
+  \label{fig:test2}
+\end{figure*}
+% \vspace{-.2cm}
+
+The architecture begins with the encoder input layer, which accepts input sequences of up to 57 characters, which is identified as a maximum input sequence length from the training data. These sequences are integer-encoded representations of characters, serving as the foundation for subsequent layers. The next step involves the embedding layer, which transforms each character in the sequence into a 64-dimensional dense vector which allows the model to capture semantic relationships among characters in a continuous space. 
+
+
+Following this, a bidirectional LSTM layer processes the embedded input sequences to capture information from both past and future characters in the sequence. The bidirectional output, consisting of hidden states from both directions, is concatenated to form a 256-dimensional representation for each timestep. To reduce dimensionality and adjust the feature representation, a dense layer is applied, resulting in a 128-dimensional vector for each timestep. The context vector extracts from this processed sequence, and it serves as the initial input to the decoder.
+
+The decoder begins with the repeat vector layer, which duplicates the context vector for each timestep of the target sequence. This ensures that all decoder timesteps have access to the same initial context. The repeated context vector is processed by an LSTM layer in the decoder, which generates a sequence of hidden states by modeling temporal dependencies in the target sequence. These states form the basis for the generation of the transliterated output. The model incorporates an attention mechanism (attention layer) to enhance its ability to focus on relevant parts of the input sequence during decoding. 
+
+The output of the LSTM decoder and the attention layer is concatenated to form a unified representation, combining temporal dependencies with context-aware features. This enriched representation is passed through a time-distributed dense layer, which applies a dense transformation to each timestep. The result is a sequence of probability distributions over the 76 output characters, from which the final transliterated word is constructed.  A single Nvidia DGX A100 GPU with 80 GB RAM was used for training the model.
+\vspace{-.2cm}
+
+
+\section{Results}
+\vspace{-.4cm}
+
+\begin{table}[htpb]
+  \caption{Evaluation metrics averaged over respective test datsets}   \label{tab:final}
+  \centering
+   \begin{tabular}{lccc}
+
+    \hline
+    \textbf{Dataset} & \textbf{CER} & \textbf{WER} &\textbf{BLEU}\\
+    & \textbf{(\%)} & \textbf{(\%)} &\textbf{(\%)}\\
+    \hline
+Test Set-1 & 7.4 &  34.5 & 32.7 \\ \hline
+Test Set-2 & 22.7 & 66.9 & 7.5 \\ \hline
+
+    \hline
+  \end{tabular}
+
+\end{table}
+
+We evaluate our model's performance using the IndoNLP Shared Task dataset\footnote{\url{https://github.com/IndoNLP-Workshop/IndoNLP-2025-Shared-Task}} for Malayalam. The test set is divided into two categories: Test Set-1, which includes general transliteration patterns, and Test Set-2, which features adhoc transliteration patterns where the romanized text omits several vowels.  These datasets consist of sentence-level samples. Samples of ground truth and predicted samples in test sets are linked in the repository\footnote{\url{https://github.com/VRCLC-DUK/ml-en-transliteration}} and an example is given in Table \ref{tab:test1}. As recommended by the task organizers, we report CER, WER, and BLEU scores separately for each test set (Table \ref{tab:final}). The distribution of these evaluation metrics over the entire test set is illustrated in Figure. \ref{fig:test1} and Figure. \ref{fig:test2}.
+
+
+
+
+% During evaluation, the romanized test sentences are split into sequences of valid source tokens and fed into the reverse transliteration model.  
+
+
+
+
+
+
+% \begin{table*}[htbp]
+%   \caption{Sample outputs from Test Set-2. The evaluation metrics of each samples are also indicated. The errors in transliteration are indicated in red color.}
+%   \label{tab:test2}
+%   \centering
+%    \begin{tabular}{p{4cm}p{4cm}p{1.8cm}p{1.8cm}p{1.8cm}}
+
+%     \hline
+%     \textbf{Ground Truth} & \textbf{Predictions} & \textbf{WER(\%)} & \textbf{CER(\%)} &\textbf{BLEU(\%)}\\
+%     \hline
+%     {\footnotesize{\malayalamfont മറന്നതോ മറച്ചതോ ആ ബാഗ്?; പിണറായി പറഞ്ഞത് ശിവശങ്കറിന്റെ മൊഴിക്കു വിരുദ്ധം}}
+%      & {\footnotesize{\malayalamfont \textcolor{red}{മൃണ്തോോ} മ\textcolor{red}{മക്ഛ്ോോ} ആ ബാഗ്?; പി\textcolor{red}{ൻ്}ായി \textcolor{red}{പ്രിജജ}ത് ശിവ\textcolor{red}{്ഷ്ൻ}ക\textcolor{red}{കിി്്െ} മൊഴിക്കു വിരുദ്ധം}} & 55.5 &  30.5& 7.1 \\ \hline
+%     {\footnotesize{\malayalamfont ദിലീപിന്റെ ജാമ്യം റദ്ദാക്കണമെന്ന ഹർജി വിചാരണക്കോടതി തള്ളി}}
+%      & {\footnotesize{\malayalamfont ദിലീപിന്റെ ജ\textcolor{red}{മമി}ം \textcolor{red}{ദദ്ധക്കകനമ}മെന്ന ഹർജി വി\textcolor{red}{ച്ർ്കകകൊൊ്}തി തല്ലി}} & 66.6 & 31.5 & 4.8\\
+%     \hline
+%   \end{tabular}
+
+% \end{table*}
+\vspace{-.2cm}
+
+\section{Discussion}
+
+\vspace{-.2cm}
+
+
+In Test Set-1 with standard typing patterns, the model achieved a 7.4\% CER, demonstrating strong performance aligned with the model's training data. For Test Set-2 involving adhoc typing patterns with frequent vowel omissions, the model's performance significantly declined as indicated by the performance metrics.
+
+While most test sentences exhibited low character-level error rates, the accompanying WER and BLEU scores appear comparatively poor. This does not indicate model inadequacy, but rather reflect the inherent limitations of WER and BLEU scores in evaluating sentence transliterations. As they penalize even minor character variations as complete word errors misrepresenting the transliteration quality \cite{james2024advocating} (Table \ref{tab:test1}).  
+
+
+
+
+An error analysis exposed the model's difficulty in distinguishing phonetically similar Malayalam characters represented using same romanised form. Specifically, the model frequently misclassifies character pairs such as {\malayalamfont ണ}/{\ipafont ɳ}/ and {\malayalamfont ന}/{\ipafont n̪}/ (both romanised as `n'), {\malayalamfont ള}/{\ipafont ɭ} and {\malayalamfont ല}/{\ipafont l}/ ((both romanised as `l'), and {\malayalamfont റ}/{\ipafont r}/ and {\malayalamfont ര}/{\ipafont ɾ}/ (both romanised as `r'). 
+\vspace{-.2cm}
+
+\section{Conclusion}
+
+Our reverse transliteration model for Malayalam demonstrates promising capabilities in converting romanized text to native script, particularly for standard typing patterns. However, the research reveals significant challenges in handling adhoc typing styles, especially those with frequent vowel omissions. Future efforts should focus on fine-tuning the model using a diverse dataset that includes a significant proportion of adhoc typing patterns to enhance its robustness and adaptability.
+
+
+\section*{Limitations}
+
+The training data primarily covers standard typing patterns and missing the nuanced variations found in irregular typing scenarios. This restricted training set significantly constrains the model's ability to generalize and accurately handle diverse input styles and patterns. Additionally, the model's design lacks a language model that could capture word dependencies and improve overall sentence-level transliteration. 
+
+
+
+
+
+
+
+\bibliography{custom}
+
+\appendix
+
+% \section{Example Appendix}
+% \label{sec:appendix}
+
+% This is an appendix.
+
+\end{document}
