@@ -56,7 +56,7 @@
 \title{Romanized to Native Malayalam Script Transliteration Using an Encoder-Decoder Framework}
 
 
-\author{Bajiyo Baiju, Leena G Pillai, Kavya Manohar, Elizabeth Sherly \\
+\author{Bajiyo Baiju, Kavya Manohar, Leena G Pillai, Elizabeth Sherly \\
        Digital University Kerala \\ Thiruvananthapuram \\ Kerala, India}
 
 
@@ -67,7 +67,7 @@
 % This document is a supplement to the general instructions for COLING 2025 authors. It contains instructions for using the \LaTeX{} style files for COLING 2025.
 % The document itself conforms to its own specifications, and is therefore an example of what your manuscript should look like.
 % These instructions should be used both for papers submitted for review and for final versions of accepted papers.
-In this work, we present the development of a reverse transliteration model to convert romanized Malayalam to native script using an encoder-decoder framework built with attention-based bidirectional Long Short Term Memory (Bi-LSTM) architecture. To train the model, we have used curated and combined collection of 4.3 million transliteration pairs derived from publicly available Indic language translitertion datasets, \textit{Dakshina} and \textit{Aksharantar}. We evaluated the model on two different test dataset provided by \textit{ IndoNLP-2025-Shared-Task} that contain, (1) General typing patterns and (2) Adhoc typing patterns, respectively. On the Test Set-1, we obtained a character error rate (CER) of 7.42\%. However upon Test Set-2, with adhoc typing patterns, where most vowel indicators are missing, our model gave a CER of 22.79\%.
+In this work, we present the development of a reverse transliteration model to convert romanized Malayalam to native script using an encoder-decoder framework built with attention-based bidirectional Long Short Term Memory (Bi-LSTM) architecture. To train the model, we have used curated and combined collection of 4.3 million transliteration pairs derived from publicly available Indic language translitertion datasets, \textit{Dakshina} and \textit{Aksharantar}. We evaluated the model on two different test dataset provided by \textit{ IndoNLP-2025-Shared-Task} that contain, (1) General typing patterns and (2) Adhoc typing patterns, respectively. On the Test Set-1, we obtained a character error rate (CER) of 7.4\%. However upon Test Set-2, with adhoc typing patterns, where most vowel indicators are missing, our model gave a CER of 22.7\%.
 
 
 \end{abstract}
@@ -100,16 +100,16 @@ A rule based system available for transliteration among Indian languages based o
 Deep learning approaches rely on carefully crafted transliteration corpora for training the models. \textit{Dakshina} is an open licensed and curated transliteration corpora \cite{roark-etal-2020-processing} consisting of native script text, a romanization lexicon and some romanized full sentences in 12 south Asian languages. \textit{Aksharantar} is the largest publicly available transliteration dataset with 26 million transliteration pairs for Indian languages created by mining from  monolingual and parallel corpora, as well as collecting data from human annotators \cite{kunchukuttan-etal-2021-large,madhani-etal-2023-aksharantar}. It has also been reported that mined name pair datasets \cite{namepair} could be used for training general purpose transliteration models \cite{Baiju2024}. 
 
 A multitask learning based training for multilingual neural transliteration leveraging orthographic similarity between languages was described in \cite{kunchukuttan2018leveraging}. Non-neural method like pair \textit{n-gram} and nueral methods like sequence-sequence LSTM  and transformer architectures were compared in \citeauthor{roark-etal-2020-processing} for single words transliteration task.
-Transliteration implemented using neural machine translation system (NMT) was proposed by \citeauthor{kunchukuttan-etal-2021-large}, where \textit{Marian} \cite{junczys-dowmunt-etal-2018-marian} was used for training the model. IndicXlit is a multilingual neural transliteration model trained on the  \textit{Aksharantar} \cite{madhani-etal-2023-aksharantar} dataset using an encoder-decoder transformer architecture. Grapheme to Phoneme Conversion systems for precise mapping of Malayalam script to precise romanisation schemes have been explored in rule based \cite{baby2016resources,parlikar2016festvox, manghat2020malayalam} and data driven \cite{Priyamvada_2021} fashions.
+Transliteration implemented using neural machine translation system (NMT) was proposed by \citeauthor{kunchukuttan-etal-2021-large}, where \textit{Marian} \cite{junczys-dowmunt-etal-2018-marian} was used for training the model. IndicXlit is a multilingual neural transliteration model trained on the  \textit{Aksharantar} \cite{madhani-etal-2023-aksharantar} dataset using an encoder-decoder transformer architecture. Grapheme to Phoneme Conversion systems for mapping of Malayalam script to precise romanisation schemes have been explored in rule based \cite{baby2016resources,parlikar2016festvox, manghat2020malayalam} and data driven \cite{Priyamvada_2021} fashions.
 
 Transliterating sentences are considered as a different task than transliterating single words in \cite{roark-etal-2020-processing}. Identifying word contexts can improve sentence level transliteration. \citeauthor{kirov2024context} describes methods to incorporate language models to improve transliteration of full sentences as opposed to single words. 
-
-In the current work, we train word-level transliteration model. During testing, we preprocess sentences by extracting individual words, performing word-level transliteration, and then reconstructing the full sentence in the post-processing stage. Non-alphabetic characters like punctuation and numbers are excluded from model input, preserved in their original positions, and reinserted after generating the transliterated token sequence.
 
 \vspace{-.2cm}
 \section{Methodology}
 
-The methodology involved in this study encompasses the curation and preprocessing of training datasets, design of the model architecture, training, and evaluation on the test data set.
+The methodology involved in this study encompasses the curation and preprocessing of training datasets, design of the model architecture, training, and evaluation on the test data set. 
+
+In the current work, we train word-level transliteration model. During testing, we preprocess sentences by extracting individual words, performing word-level transliteration, and then reconstructing the full sentence in the post-processing stage. Non-alphabetic characters like punctuation and numbers are excluded from model input, preserved in their original positions, and reinserted after generating the transliterated token sequence.
 \vspace{-.2cm}
 \subsection{Datsets}
 
